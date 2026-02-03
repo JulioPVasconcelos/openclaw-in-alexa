@@ -242,7 +242,8 @@ Safety UX rule:
 
 ## Diagram
 
-See `docs/DIAGRAM.md` (Mermaid).
+- Mermaid source: [`docs/DIAGRAM.md`](docs/DIAGRAM.md)
+- Quick link (GitHub anchor): `docs/DIAGRAM.md#architecture-diagram`
 
 ## Files
 
