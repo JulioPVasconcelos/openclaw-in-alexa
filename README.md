@@ -144,4 +144,4 @@ Additionally, we adopted a safety UX rule:
 ---
 
 ## License
-MIT (or your preferred license).
+MIT.
