@@ -11,7 +11,7 @@ flowchart LR
   VM1 -->|Routine executes| A[Alexa / Echo]
   VM2 -->|Announcement spoken<br/>voice + language| A
 
-  subgraph Local machine (Windows/macOS/Linux)
+  subgraph LocalMachine[Local machine]
     P
   end
 ```
