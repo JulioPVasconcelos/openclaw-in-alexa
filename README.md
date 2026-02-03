@@ -85,7 +85,7 @@ curl -X POST http://127.0.0.1:18793/announce \
   -H "Content-Type: application/json; charset=utf-8" \
   -d '{
     "device":"echo",
-    "text":"Olá, eu sou o Furabot e estou falando com você pela Alexa!",
+    "text":"Olá, eu sou seu assistente e estou falando com você pela Alexa!",
     "language":"pt-BR",
     "voice":"Camila"
   }'
