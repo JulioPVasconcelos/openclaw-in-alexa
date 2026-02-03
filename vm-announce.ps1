@@ -1,18 +1,20 @@
 param(
   [Parameter(Mandatory=$true)][string]$Device,
   [Parameter(Mandatory=$true)][string]$Text,
-  [string]$Language = 'pt-BR',
-  [string]$Voice = 'Camila',
+  [string]$Language = $env:VM_DEFAULT_LANGUAGE,
+  [string]$Voice = $env:VM_DEFAULT_VOICE,
   [string]$Url = 'http://127.0.0.1:18793/announce'
 )
+
+if (-not $Language -or $Language.Trim().Length -eq 0) { $Language = 'pt-BR' }
+if (-not $Voice -or $Voice.Trim().Length -eq 0) { $Voice = 'Camila' }
 
 $base = Split-Path -Parent $MyInvocation.MyCommand.Path
 $keyPath = Join-Path $base 'secrets\proxy-key.txt'
 $key = (Get-Content -Raw $keyPath).Trim()
 
 $headers = @{ 'X-Proxy-Key' = $key }
-$payload = @{ device = $Device; text = $Text; language = $Language }
-if ($Voice -and $Voice.Trim().Length -gt 0) { $payload.voice = $Voice }
+$payload = @{ device = $Device; text = $Text; language = $Language; voice = $Voice }
 $body = $payload | ConvertTo-Json
 
 try {

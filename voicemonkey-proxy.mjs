@@ -70,12 +70,16 @@ async function trigger(device) {
 async function announce({ device, text, language, voice }) {
   const token = readSecret(tokenPath, 'voicemonkey token');
 
+  // Defaults (Brazilian-friendly, but fully customizable)
+  const defaultVoice = process.env.VM_DEFAULT_VOICE || 'Camila';
+  const defaultLanguage = process.env.VM_DEFAULT_LANGUAGE || 'pt-BR';
+
   // VoiceMonkey's UI generates a percent-encoded querystring (spaces as %20).
   // URLSearchParams encodes spaces as "+"; some providers don't decode "+" correctly.
   // So we build the query manually with encodeURIComponent.
   const t = sanitizeSpeakText(text);
-  const v = (voice && String(voice).trim()) ? voice : 'Camila';
-  const lang = language || 'pt-BR';
+  const v = (voice && String(voice).trim()) ? voice : defaultVoice;
+  const lang = language || defaultLanguage;
 
   const qs = [
     `token=${encodeURIComponent(token)}`,

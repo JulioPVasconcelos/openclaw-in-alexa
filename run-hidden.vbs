@@ -3,4 +3,4 @@
 
 Set WshShell = CreateObject("WScript.Shell")
 WshShell.CurrentDirectory = CreateObject("Scripting.FileSystemObject").GetAbsolutePathName(".")
-WshShell.Run "node voicemonkey-proxy.mjs", 0, False
+WshShell.Run "cmd /c run-hidden.cmd", 0, False
