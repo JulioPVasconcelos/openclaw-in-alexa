@@ -1,10 +1,10 @@
 flowchart LR
   U[User] -->|WhatsApp / Postman / curl| C[Client]
-  C -->|HTTP POST + X-Proxy-Key\n127.0.0.1:18793| P[Local VoiceMonkey Proxy]
+  C -->|POST to 127.0.0.1:18793<br/>X-Proxy-Key| P[Local VoiceMonkey Proxy]
   P -->|GET /trigger| VM1[VoiceMonkey Trigger API]
-  P -->|GET /announcement\n(UTF-8 percent-encoded)| VM2[VoiceMonkey Announcement API]
-  VM1 -->|Alexa routine| A[(Alexa / Echo)]
-  VM2 -->|Announcement spoken\n(voice + language)| A
+  P -->|GET /announcement<br/>UTF-8 encoded query| VM2[VoiceMonkey Announcement API]
+  VM1 -->|Routine executes| A[Alexa / Echo]
+  VM2 -->|Announcement spoken<br/>voice + language| A
 
   subgraph Local machine (Windows/macOS/Linux)
     P
