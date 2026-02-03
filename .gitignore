@@ -1,0 +1,12 @@
+# secrets
+secrets/
+
+# node
+node_modules/
+
+# logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
