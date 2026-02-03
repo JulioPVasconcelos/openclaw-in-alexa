@@ -49,8 +49,8 @@ function requireKey(req, res) {
 }
 
 // VoiceMonkey expects URL-encoded UTF-8 in the querystring.
-// We rely on URLSearchParams to encode safely (e.g., "Olá" -> Ol%C3%A1).
-// Keep transformations minimal to avoid breaking Alexa's word recognition.
+// We intentionally keep transformations minimal to avoid breaking Alexa's word recognition.
+// (The announcement URL is built with encodeURIComponent to match VoiceMonkey's UI behavior.)
 function sanitizeSpeakText(input) {
   // Just normalize whitespace.
   return String(input ?? '').replace(/\s+/g, ' ').trim();

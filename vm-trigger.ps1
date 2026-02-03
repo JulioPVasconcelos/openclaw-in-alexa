@@ -11,7 +11,8 @@ $headers = @{ 'X-Proxy-Key' = $key }
 $body = @{ device = $Device } | ConvertTo-Json
 
 try {
-  $r = Invoke-WebRequest -Method Post -Uri $Url -Headers $headers -Body $body -ContentType 'application/json' -UseBasicParsing -TimeoutSec 20
+  $bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+  $r = Invoke-WebRequest -Method Post -Uri $Url -Headers $headers -Body $bytes -ContentType 'application/json; charset=utf-8' -UseBasicParsing -TimeoutSec 20
   Write-Output $r.StatusCode
 } catch {
   Write-Error $_

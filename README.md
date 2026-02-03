@@ -14,6 +14,11 @@ This write-up documents a common pitfall: **UTF‑8 end‑to‑end**. If you sen
 - `./secrets/token.txt` → your VoiceMonkey token
 - `./secrets/proxy-key.txt` → random secret string (local auth)
 
+Tip (Windows): generate a proxy key:
+```powershell
+[guid]::NewGuid().ToString('N')
+```
+
 2) Run:
 ```bash
 node voicemonkey-proxy.mjs
@@ -36,11 +41,18 @@ curl -X POST http://127.0.0.1:18793/announce \
   }'
 ```
 
+Postman also works:
+- Method: `POST`
+- URL: `http://127.0.0.1:18793/announce`
+- Headers: `X-Proxy-Key`, `Content-Type: application/json; charset=utf-8`
+- Body (raw JSON): same payload as above
+
 ---
 
 ## Prereqs
 
 - Node.js 18+ (Node 20+ recommended)
+  - Node 18+ includes built-in `fetch()` (required by this proxy).
 - A VoiceMonkey account + device(s)
   - Website: https://voicemonkey.io/
   - You must configure at least one target device name for announcements (example: `device=echo`).
