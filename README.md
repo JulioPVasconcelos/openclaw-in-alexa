@@ -157,19 +157,45 @@ That’s why `vm-announce.ps1` explicitly sends UTF‑8 bytes.
 
 ---
 
+## Run on Windows startup (Task Scheduler)
+
+If you want this to behave like a “service”, use **Task Scheduler**.
+
+### Option 1 (simplest): run on logon (no password required)
+
+Create Task →
+- **General**: “Run only when user is logged on”
+- **Trigger**: “At log on”
+- **Action**:
+  - Program: `C:\Program Files\nodejs\node.exe` (or your `node.exe` path)
+  - Args: `voicemonkey-proxy.mjs`
+  - Start in: the repo folder
+
+### Run without a console window (recommended)
+
+Use the provided `run-hidden.vbs`:
+- Program: `C:\Windows\System32\wscript.exe`
+- Args: `run-hidden.vbs`
+- Start in: the repo folder
+
+Then validate:
+- `GET http://127.0.0.1:18793/health`
+
+---
+
 ## Troubleshooting
 
-- **Can’t connect to proxy**
-  - Make sure it’s running and bound to `127.0.0.1:18793`.
-  - Check Windows firewall if you changed ports.
+- **ECONNREFUSED 127.0.0.1:18793**
+  - The proxy isn’t running on this machine.
+  - Start it (`node voicemonkey-proxy.mjs`) or check your Task Scheduler entry.
 
 - **VoiceMonkey returns 200 but Echo doesn’t speak**
   - Verify the `device` name exactly as configured in VoiceMonkey.
   - Confirm your Alexa device is linked and available.
 
-- **Words in other languages sound wrong**
-  - Double-check UTF‑8 end‑to‑end (see section above).
-  - Try a different `voice` (VoiceMonkey supports `voice=<name>`).
+- **Accents / non-English characters sound wrong**
+  - Double-check UTF‑8 end‑to‑end (JSON as UTF‑8 bytes + `charset=utf-8`).
+  - Try a different `voice`.
 
 ---
 
