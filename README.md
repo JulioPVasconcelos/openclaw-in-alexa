@@ -240,12 +240,24 @@ Safety UX rule:
 
 ---
 
+## Diagram
+
+See `docs/DIAGRAM.md` (Mermaid).
+
 ## Files
 
 - `voicemonkey-proxy.mjs`
 - `vm-trigger.ps1`
 - `vm-announce.ps1`
+- `run-hidden.vbs` + `run-hidden.cmd` (Windows hidden runner)
+- `.env.example` (non-secret config examples)
 - `.gitignore` (ignores `secrets/`)
+
+---
+
+## Changelog
+
+See `CHANGELOG.md`.
 
 ---
 
