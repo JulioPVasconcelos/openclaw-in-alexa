@@ -2,7 +2,9 @@
 
 A practical **tutorial + case study** showing how to make an **Echo (Alexa)** speak custom messages using **VoiceMonkey Announcements**, while keeping the **VoiceMonkey token off chat logs** by storing it locally and exposing only a **loopback** proxy endpoint.
 
-This write-up documents a common pitfall: **UTF‑8 end‑to‑end**. If you send the message payload with the wrong encoding, words like **“você”** can be spoken incorrectly.
+This project was built by Brazilians and defaults to **PT‑BR + Camila** on purpose — but it’s designed to work with **any VoiceMonkey language/voice**.
+
+This write-up documents a common pitfall: **UTF‑8 end‑to‑end**. If you send the message payload with the wrong encoding, non‑ASCII characters (e.g. accents) can be spoken incorrectly.
 
 > Goal: send a command (e.g. from WhatsApp via OpenClaw) and have your **assistant speak through Alexa** in a distinct voice (default: `Camila`) **only when explicitly requested**.
 
@@ -36,8 +38,8 @@ curl -X POST http://127.0.0.1:18793/announce \
   -H "Content-Type: application/json; charset=utf-8" \
   -d '{
     "device":"echo",
-    "text":"Olá, eu sou seu assistente e estou falando com você pela Alexa!",
-    "language":"pt-BR"
+    "text":"Hello! I am your assistant speaking through Alexa.",
+    "language":"en-US"
   }'
 ```
 
@@ -117,12 +119,12 @@ Default address:
 curl -X POST http://127.0.0.1:18793/trigger \
   -H "X-Proxy-Key: <your proxy key>" \
   -H "Content-Type: application/json; charset=utf-8" \
-  -d '{"device":"ligar-luzes"}'
+  -d '{"device":"turn-on-lights"}'
 ```
 
 PowerShell helper:
 ```powershell
-powershell -NoProfile -File .\vm-trigger.ps1 -Device "ligar-luzes"
+powershell -NoProfile -File .\vm-trigger.ps1 -Device "turn-on-lights"
 ```
 
 ### Make Alexa speak (Announcement)
@@ -133,39 +135,39 @@ curl -X POST http://127.0.0.1:18793/announce \
   -H "Content-Type: application/json; charset=utf-8" \
   -d '{
     "device":"echo",
-    "text":"Olá, eu sou seu assistente e estou falando com você pela Alexa!",
-    "language":"pt-BR",
+    "text":"Hello! I am your assistant speaking through Alexa.",
+    "language":"en-US",
     "voice":"Camila"
   }'
 ```
 
 PowerShell helper (note: sends JSON as UTF‑8 bytes):
 ```powershell
-powershell -NoProfile -File .\vm-announce.ps1 -Device "echo" -Text "Olá, estou falando com você." -Language "pt-BR"
+powershell -NoProfile -File .\vm-announce.ps1 -Device "echo" -Text "Hello! I am your assistant speaking through Alexa." -Language "en-US"
 ```
 
-> Voice: this repo defaults to `Camila` when you don’t specify a voice.
+> Defaults: this repo uses `VM_DEFAULT_VOICE` (fallback `Camila`) and `VM_DEFAULT_LANGUAGE` (fallback `pt-BR`). You can override both per request.
 
 ---
 
-## Case study: the UTF‑8 pitfall (why “você” became “voc…“)
+## Case study: the UTF‑8 pitfall (why accents became garbled)
 
 VoiceMonkey’s UI generates a URL like:
 
 ```
-https://api-v2.voicemonkey.io/announcement?token=TOKEN_AQUI&device=echo&text=Ol%C3%A1%2C%20...%20voc%C3%AA%20...&language=pt-BR
+https://api-v2.voicemonkey.io/announcement?token=TOKEN_HERE&device=echo&text=Ol%C3%A1%2C%20...%20voc%C3%AA%20...&language=pt-BR
 ```
 
 Key observations:
 
-1) The UI **percent-encodes UTF‑8**, so characters like `á` and `ê` are correctly represented.
-2) If your client sends the request payload in a non‑UTF‑8 encoding (common on Windows), the server may receive mangled text (e.g. `vocÃª`), which can cause Alexa to pronounce it incorrectly.
+1) VoiceMonkey’s UI percent-encodes UTF‑8 in the querystring.
+2) If your client sends the request payload in a non‑UTF‑8 encoding (common on Windows), the server may receive mangled text (e.g. `vocÃª`). This can affect many languages (accented Latin characters like é/ü/ñ, and more), depending on where encoding is lost.
 
 Fix:
 - send JSON as **UTF‑8 bytes**
 - set `Content-Type: application/json; charset=utf-8`
 
-That’s why `vm-announce.ps1` explicitly sends UTF‑8 bytes.
+That’s why `vm-announce.ps1` (and `vm-trigger.ps1`) explicitly send UTF‑8 bytes.
 
 ---
 
@@ -190,8 +192,24 @@ Use the provided `run-hidden.vbs`:
 - Args: `run-hidden.vbs`
 - Start in: the repo folder
 
+> Note: if you want custom defaults (voice/language) for Task Scheduler, use `run-hidden.cmd` (see Configuration below).
+
 Then validate:
 - `GET http://127.0.0.1:18793/health`
+
+---
+
+## Configuration
+
+Environment variables (optional):
+- `VM_DEFAULT_VOICE` (default: `Camila`) — pick any voice supported by your VoiceMonkey account.
+- `VM_DEFAULT_LANGUAGE` (default: `pt-BR`) — e.g. `en-US`, `es-ES`, `fr-FR`.
+
+Request-level overrides:
+- `POST /announce` body can include `voice` and `language` to override defaults.
+
+Windows Task Scheduler tip:
+- Use `run-hidden.vbs` (which calls `run-hidden.cmd`) so you can set defaults in `run-hidden.cmd` without opening a console window.
 
 ---
 

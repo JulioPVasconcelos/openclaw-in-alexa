@@ -8,7 +8,8 @@ $keyPath = Join-Path $base 'secrets\proxy-key.txt'
 $key = (Get-Content -Raw $keyPath).Trim()
 
 $headers = @{ 'X-Proxy-Key' = $key }
-$body = @{ device = $Device } | ConvertTo-Json
+$payload = @{ device = $Device }
+$body = $payload | ConvertTo-Json
 
 try {
   $bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
